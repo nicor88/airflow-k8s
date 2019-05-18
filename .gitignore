@@ -1,0 +1,4 @@
+.idea
+postgres_data
+venv
+*/__pycache__
