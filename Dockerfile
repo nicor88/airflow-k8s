@@ -93,6 +93,7 @@ COPY requirements.txt .
 RUN pip install --user -r requirements.txt
 
 COPY config/airflow.cfg ${AIRFLOW_HOME}/airflow.cfg
+COPY config/add_admin_user.py ${AIRFLOW_HOME}/add_admin_user.py
 
 COPY dags ${AIRFLOW_HOME}/dags
 COPY plugins ${AIRFLOW_HOME}/plugins

@@ -4,6 +4,8 @@ services:
   redis:
     image: 'redis:5.0.3'
     command: redis-server
+    networks:
+      - airflow
 
   postgres:
     image: postgres:10.4
@@ -15,6 +17,8 @@ services:
       - ./postgres_data:/var/lib/postgresql/data
     ports:
       - 5432:5432
+    networks:
+      - airflow
 
   webserver:
     image: airflow:latest
@@ -31,10 +35,13 @@ services:
       - POSTGRES_USER=airflow
       - POSTGRES_PASSWORD=airflow
       - POSTGRES_DB=airflow
-      - FERNET_KEY=${AIRFLOW_FERNET_KEY}
+      - STAGE=local
+      # Airflow specific
+      - EXECUTOR=CeleryExecutor
+      - AIRFLOW_HOME=/usr/local/airflow
       - AIRFLOW_BASE_URL=http://localhost:8080
+      - FERNET_KEY=${AIRFLOW_FERNET_KEY}
       - ENABLE_REMOTE_LOGGING=False
-      - STAGE=dev
     volumes:
       - ./dags:/usr/local/airflow/dags
     ports:
@@ -45,6 +52,8 @@ services:
       interval: 30s
       timeout: 30s
       retries: 3
+    networks:
+      - airflow
 
   flower:
     image: airflow:latest
@@ -60,10 +69,15 @@ services:
       - POSTGRES_USER=airflow
       - POSTGRES_PASSWORD=airflow
       - POSTGRES_DB=airflow
-      - STAGE=dev
+      - STAGE=local
+      # Airflow specific
+      - EXECUTOR=CeleryExecutor
+      - AIRFLOW_HOME=/usr/local/airflow
     ports:
       - "5555:5555"
     command: flower
+    networks:
+      - airflow
 
   scheduler:
     image: airflow:latest
@@ -80,11 +94,16 @@ services:
       - POSTGRES_USER=airflow
       - POSTGRES_PASSWORD=airflow
       - POSTGRES_DB=airflow
-      - FERNET_KEY=${AIRFLOW_FERNET_KEY}
+      - STAGE=local
+      # Airflow specific
+      - EXECUTOR=CeleryExecutor
+      - AIRFLOW_HOME=/usr/local/airflow
       - AIRFLOW_BASE_URL=http://localhost:8080
+      - FERNET_KEY=${AIRFLOW_FERNET_KEY}
       - ENABLE_REMOTE_LOGGING=False
-      - STAGE=dev
     command: scheduler
+    networks:
+      - airflow
 
   worker:
     image: airflow:latest
@@ -102,8 +121,16 @@ services:
       - POSTGRES_USER=airflow
       - POSTGRES_PASSWORD=airflow
       - POSTGRES_DB=airflow
-      - FERNET_KEY=${AIRFLOW_FERNET_KEY}
+      - STAGE=local
+      # Airflow specific
+      - EXECUTOR=CeleryExecutor
+      - AIRFLOW_HOME=/usr/local/airflow
       - AIRFLOW_BASE_URL=http://localhost:8080
+      - FERNET_KEY=${AIRFLOW_FERNET_KEY}
       - ENABLE_REMOTE_LOGGING=False
-      - STAGE=dev
     command: worker
+    networks:
+      - airflow
+
+networks:
+  airflow:

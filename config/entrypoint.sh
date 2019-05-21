@@ -2,6 +2,8 @@
 
 TRY_LOOP="20"
 
+: "${EXECUTOR:="CeleryExecutor"}"
+
 : "${REDIS_HOST:="redis"}"
 : "${REDIS_PORT:="6379"}"
 
@@ -22,15 +24,31 @@ wait_for_port() {
   done
 }
 
+if [ "$EXECUTOR" = "CeleryExecutor" ]; then
+  wait_for_port "Redis" "$REDIS_HOST" "$REDIS_PORT"
+fi
+
 
 wait_for_port "Postgres" "$POSTGRES_HOST" "$POSTGRES_PORT"
 
-wait_for_port "Redis" "$REDIS_HOST" "$REDIS_PORT"
 
 case "$1" in
   webserver)
     airflow initdb
-		sleep 5
+	sleep 5
+
+	if [ "$EXECUTOR" = "LocalExecutor" ]; then
+      # With the "Local" executor it should all run in one container.
+      airflow scheduler &
+    fi
+
+    # TODO here we can add a custom script for example to load
+
+    if [ "$AIRFLOW__WEBSERVER__AUTHENTICATE" = "True" ]; then
+      # With the "Local" executor it should all run in one container.
+      python /usr/local/airflow/add_admin_user.py
+    fi
+
     exec airflow webserver
     ;;
   worker|scheduler)

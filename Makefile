@@ -1,10 +1,16 @@
 AIRFLOW_VERSION="1.10.3"
 
-airflow-up:
-	@docker-compose up --build
+airflow-celery-up:
+	@docker-compose -f docker-compose-celery.yml up --build
 
-airflow-down:
-	@docker-compose down
+airflow-celery-down:
+	@docker-compose -f docker-compose-celery.yml down
+
+airflow-local-up:
+	@docker-compose -f docker-compose-local.yml up --build
+
+airflow-local-down:
+	@docker-compose -f docker-compose-local.yml down
 
 clean:
 	@rm -rf postgres_data

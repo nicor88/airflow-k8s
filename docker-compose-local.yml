@@ -1,0 +1,61 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:10.4
+    environment:
+      - POSTGRES_USER=airflow
+      - POSTGRES_PASSWORD=airflow
+      - POSTGRES_DB=airflow
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    networks:
+      - airflow
+
+  webserver:
+    image: airflow:latest
+    restart: always
+    build: .
+    depends_on:
+      - postgres
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=airflow
+      - POSTGRES_PASSWORD=airflow
+      - POSTGRES_DB=airflow
+      - STAGE=local
+      # Airflow specific
+      - EXECUTOR=LocalExecutor
+      - AIRFLOW_HOME=/usr/local/airflow
+      - AIRFLOW_BASE_URL=http://localhost:8080
+      - FERNET_KEY=${AIRFLOW_FERNET_KEY}
+      - ENABLE_REMOTE_LOGGING=False
+
+#      - AIRFLOW__WEBSERVER__AUTHENTICATE=True
+#      - AIRFLOW__WEBSERVER__AUTH_BACKEND=airflow.contrib.auth.backends.password_auth
+#      - AIRFLOW_ADMIN_USER=admin_local
+#      - AIRFLOW_ADMIN_PASSWORD=admin_local
+
+#      - AWS_ACCESS_KEY_ID=${AIRFLOW_AWS_ACCESS_KEY_ID}
+#      - AWS_SECRET_ACCESS_KEY=${AIRFLOW_AWS_SECRET_ACCESS_KEY}
+#      - AWS_DEFAULT_REGION=us-east-1
+    volumes:
+      - ./dags:/usr/local/airflow/dags
+    ports:
+      - "8080:8080"
+    command: webserver
+    healthcheck:
+      test: ["CMD-SHELL", "[ -f /usr/local/airflow/airflow-webserver.pid ]"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+    networks:
+      - airflow
+
+networks:
+  airflow:
