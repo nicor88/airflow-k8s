@@ -15,11 +15,14 @@ airflow-local-down:
 clean:
 	@rm -rf postgres_data
 
-install-airflow:
-	@pip install git+https://github.com/apache/incubator-airflow.git@${AIRFLOW_VERSION}#egg=apache-airflow[crypto,kubernetes,password,postgres,s3,slack]
-
 install-deps:
 	@pip install -r requirements.txt
 
 activate-env:
 	. ./venv/bin/activate
+
+deploy:
+	bash scripts/deploy.sh
+
+install-airflow-locally:
+	pip install git+https://github.com/apache/incubator-airflow.git@${AIRFLOW_VERSION}#egg=apache-airflow[async,crypto,celery,kubernetes,password,postgres,s3,slack]

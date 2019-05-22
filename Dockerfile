@@ -65,7 +65,7 @@ RUN set -ex \
     && pip install pyOpenSSL \
     && pip install ndg-httpsclient \
     && pip install pyasn1 \
-    && pip install git+https://github.com/apache/incubator-airflow.git@${AIRFLOW_VERSION}#egg=apache-airflow[async,crypto,celery,kubernetes,jdbc,password,postgres,s3,slack] \
+    && pip install git+https://github.com/apache/incubator-airflow.git@${AIRFLOW_VERSION}#egg=apache-airflow[async,crypto,celery,kubernetes,password,postgres,s3,slack] \
     && pip install redis==${PYTHON_REDIS_VERSION} \
     && pip install celery[redis]==${CELERY_REDIS_VERSION} \
     && pip install flask_oauthlib \
