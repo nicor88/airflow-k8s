@@ -68,24 +68,24 @@ t3 = PythonOperator(
 )
 
 t4 = PythonOperator(
-
     task_id='task_4',
     dag=dag,
     python_callable=task_4
 )
 
 t5 = KubernetesPodOperator(
+    task_id='task_5',
+    dag=dag,
     in_cluster=True,
+    is_delete_operator_pod=True,
     namespace='airflow',
     service_account_name='default',
-    image="python:3.6",
-    cmds=["python", "-c"],
+    image='python:3.6',
+    cmds=['python', '-c'],
     arguments=["print('hello world')"],
-    labels={"foo": "bar"},
-    name="airflow",
-    task_id="task_5",
-    get_logs=True,
-    dag=dag
+    labels={'foo': 'bar'},
+    name='airflow-k8s-pod-operator',
+    get_logs=True
 )
 
 t1 >> [t2, t3] >> t4 >> t5
