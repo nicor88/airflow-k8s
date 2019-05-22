@@ -43,6 +43,10 @@ def task_3(**kwargs):
     return {'output': 'hello world 3', 'execution_time': str(datetime.now())}
 
 
+def task_4(**kwargs):
+    logger.info('Log from task 4')
+    return {'output': 'hello world 4', 'execution_time': str(datetime.now())}
+
 t1 = PythonOperator(
     task_id='task_1',
     dag=dag,
@@ -61,4 +65,10 @@ t3 = PythonOperator(
     python_callable=task_3
 )
 
-t1 >> [t2, t3]
+t4 = PythonOperator(
+    task_id='task_4',
+    dag=dag,
+    python_callable=task_4
+)
+
+t1 >> [t2, t3] >> t4
