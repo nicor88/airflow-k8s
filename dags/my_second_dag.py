@@ -3,6 +3,7 @@ import logging
 
 from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
+from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
 
 import pandas
 import toolz
@@ -71,4 +72,15 @@ t4 = PythonOperator(
     python_callable=task_4
 )
 
-t1 >> [t2, t3] >> t4
+t5 = KubernetesPodOperator(namespace='airflow',
+                           image="python:3.6",
+                           cmds=["python", "-c"],
+                           arguments=["print('hello world')"],
+                           labels={"foo": "bar"},
+                           name="task_5t",
+                           task_id="task_5",
+                           get_logs=True,
+                           dag=dag
+                           )
+
+t1 >> [t2, t3] >> t4 >> t5
