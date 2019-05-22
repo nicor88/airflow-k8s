@@ -44,6 +44,8 @@ services:
 #      - AWS_ACCESS_KEY_ID=${AIRFLOW_AWS_ACCESS_KEY_ID}
 #      - AWS_SECRET_ACCESS_KEY=${AIRFLOW_AWS_SECRET_ACCESS_KEY}
 #      - AWS_DEFAULT_REGION=us-east-1
+#      - ENABLE_REMOTE_LOGGING=True
+#      - LOGS_S3_BUCKET=s3://nicor88-airflow-logs/local
     volumes:
       - ./dags:/usr/local/airflow/dags
     ports:
