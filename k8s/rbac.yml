@@ -6,7 +6,7 @@ metadata:
 rules:
   - apiGroups: [""] # "" indicates the core API group
     resources: ["pods", "pods/log"]
-    verbs: ["get", "watch", "list", "create"]
+    verbs: ["get", "watch", "list", "create", "delete"]
 ---
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
@@ -15,10 +15,9 @@ metadata:
   namespace: airflow
 subjects:
   - kind: ServiceAccount
-    name: airflow-sa
+    name: airflow-pod-sa
     namespace: airflow
 roleRef:
   kind: Role
   name: airflow-role-admin
   apiGroup: rbac.authorization.k8s.io
-
