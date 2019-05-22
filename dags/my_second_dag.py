@@ -48,6 +48,7 @@ def task_4(**kwargs):
     logger.info('Log from task 4')
     return {'output': 'hello world 4', 'execution_time': str(datetime.now())}
 
+
 t1 = PythonOperator(
     task_id='task_1',
     dag=dag,
@@ -72,15 +73,17 @@ t4 = PythonOperator(
     python_callable=task_4
 )
 
-t5 = KubernetesPodOperator(namespace='airflow',
-                           image="python:3.6",
-                           cmds=["python", "-c"],
-                           arguments=["print('hello world')"],
-                           labels={"foo": "bar"},
-                           name="task_5t",
-                           task_id="task_5",
-                           get_logs=True,
-                           dag=dag
-                           )
+t5 = KubernetesPodOperator(
+        in_cluster=True,
+        namespace='airflow',
+        image="python:3.6",
+        cmds=["python", "-c"],
+        arguments=["print('hello world')"],
+        labels={"foo": "bar"},
+        name="task_5t",
+        task_id="task_5",
+        get_logs=True,
+        dag=dag
+    )
 
 t1 >> [t2, t3] >> t4 >> t5
