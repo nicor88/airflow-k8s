@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 IMAGE_NAME=airflow
+K8S_NAMESPACE=airflow
 : "${COMMIT_HASH:="$(git log -1 --pretty=%H)"}"
 
 echo ${COMMIT_HASH}
@@ -38,10 +39,10 @@ if [ "$EXIT_STATUS" = "1" ]; then
 else
 
 echo "Update Kubernetes containers image"
-	# update deployments image
-	kubectl set image deployment/airflow-worker worker=${AWS_ACCOUNT}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/airflow:$COMMIT_HASH || EXIT_STATUS=$?
-	kubectl set image deployment/airflow-scheduler scheduler=${AWS_ACCOUNT}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/airflow:$COMMIT_HASH || EXIT_STATUS=$?
-	kubectl set image deployment/airflow-web web=${AWS_ACCOUNT}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/airflow:$COMMIT_HASH || EXIT_STATUS=$?
+    # update deployments image
+	kubectl set image deployment/airflow-worker worker=${AWS_ACCOUNT}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/airflow:$COMMIT_HASH -n ${K8S_NAMESPACE} || EXIT_STATUS=$?
+	kubectl set image deployment/airflow-scheduler scheduler=${AWS_ACCOUNT}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/airflow:$COMMIT_HASH -n ${K8S_NAMESPACE} || EXIT_STATUS=$?
+	kubectl set image deployment/airflow-web web=${AWS_ACCOUNT}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/airflow:$COMMIT_HASH  -n ${K8S_NAMESPACE} || EXIT_STATUS=$?
 fi
 
 exit $EXIT_STATUS

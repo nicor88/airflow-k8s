@@ -197,14 +197,14 @@ spec:
             httpGet:
               path: /health
               port: 8080
-            initialDelaySeconds: 120
+            initialDelaySeconds: 90
             timeoutSeconds: 30
             periodSeconds: 60
           livenessProbe:
             httpGet:
               path: /health
               port: 8080
-            initialDelaySeconds: 240
+            initialDelaySeconds: 120
             periodSeconds: 60
 ---
 apiVersion: apps/v1beta1
